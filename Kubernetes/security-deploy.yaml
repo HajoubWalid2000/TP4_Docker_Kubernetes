@@ -1,32 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: enseignant-service
+  name: security-service
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: enseignant-service
+      app: security-service
   template:
     metadata:
       labels:
-        app: enseignant-service
+        app: security-service
     spec:
       containers:
-        - name: enseignant-service
-          image: labo_enseignant_images
+        - name: security-service
+          image: labo_security_images
           imagePullPolicy: Never
           ports:
-            - containerPort: 8081
+            - containerPort: 8080
           env:
             - name: DISCOVERY_SERVICE_URL
               value: http://discovery-service.default.svc.cluster.local:8761/eureka
-            - name: CONFIG_SERVICE_URL
-              value: http://config-service.default.svc.cluster.local:9999
           readinessProbe:
             httpGet:
               path: /actuator/health
-              port: 8081
+              port: 8080
             initialDelaySeconds: 5
             periodSeconds: 5
             failureThreshold: 3
@@ -35,12 +33,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: enseignant-service
+  name: security-service
 spec:
   selector:
-    app: enseignant-service
+    app: security-service
   ports:
     - protocol: TCP
-      port: 8081
-      targetPort: 8081
+      port: 8080
+      targetPort: 8080
   type: LoadBalancer
